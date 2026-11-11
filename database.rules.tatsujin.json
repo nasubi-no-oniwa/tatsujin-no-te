@@ -1,0 +1,40 @@
+{
+  "last": {
+    "$uid": {
+      ".read": "auth != null && auth.uid === $uid",
+      ".write": "auth != null && auth.uid === $uid && newData.exists() && (!data.exists() || now - data.child('t').val() > 1500)",
+      ".validate": "newData.hasChildren(['t'])",
+      "t": { ".validate": "newData.val() === now" },
+      "$other": { ".validate": false }
+    }
+  },
+  "r": {
+    "$b": {
+      ".read": true,
+      ".indexOn": ["k"],
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid && newData.exists() && $b.matches(/^(maru|sankaku|shikaku|batsu)$/) && (!data.exists() || newData.child('k').val() > data.child('k').val())",
+        ".validate": "newData.hasChildren(['n', 'p', 's', 'k', 'd', 'st', 'v', 't']) && newData.child('st').val() === root.child('tatsujin/last/' + auth.uid + '/t').val() && now - newData.child('st').val() >= 500 && now - newData.child('st').val() <= 3600000",
+        "n": { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 16" },
+        "p": { ".validate": "newData.isString() && newData.val().length === 288 && newData.val().matches(/^[A-Za-z0-9_-]+$/)" },
+        "s": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 100000" },
+        "k": { ".validate": "newData.val() === newData.parent().child('s').val()" },
+        "d": { ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 100 && newData.val() <= 7000" },
+        "st": { ".validate": "newData.isNumber()" },
+        "v": { ".validate": "newData.val() === 1" },
+        "t": { ".validate": "newData.val() === now" },
+        "$other": { ".validate": false }
+      }
+    }
+  },
+  "p": {
+    "$b": {
+      ".read": true,
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid && newData.exists()",
+        ".validate": "newData.val() === true && root.child('tatsujin/r/' + $b + '/' + $uid + '/s').val() === 100000"
+      }
+    }
+  },
+  "hidden": { ".read": true }
+}
