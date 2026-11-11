@@ -37,6 +37,7 @@ const q=await req('GET',P+'/r/maru',null,undefined,'&orderBy=%22k%22&endAt=99999
 const q2=await req('GET',P+'/r/shikaku',null,undefined,'&orderBy=%22k%22&equalTo=100000&limitToFirst=30');ex('100%の人を読める',q2,true);if(!(q2.j&&q2.j[U])){fail++;console.log('NG  100%の中身がちがう');}
 const q3=await req('GET',P+'/p/shikaku',null,undefined,'&shallow=true');ex('100%の人数を読める',q3,true);if(!(q3.j&&q3.j[U]===true)){fail++;console.log('NG  人数の中身がちがう',JSON.stringify(q3.j));}
 ex('ほかの人のチケットは読めない',await req('GET',P+'/last/'+U,U2),false);
+await sleep(1700);
 ex('チケットは1.5秒に1回まで',await req('PUT',P+'/last/'+U,U,{t:TS}),true);
 ex('すぐ次のチケットは取れない',await req('PUT',P+'/last/'+U,U,{t:TS}),false);
 console.log(fail?('失敗 '+fail+' 件'):'すべて OK');process.exit(fail?1:0);
