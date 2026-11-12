@@ -1,0 +1,37 @@
+{
+  "set": {
+    ".read": true,
+    ".write": "auth != null && !data.exists() && !root.child('xquote/pass').exists()",
+    ".validate": "newData.val() === true && newData.parent().child('pass').exists()"
+  },
+  "pass": {
+    ".write": "auth != null && !data.exists()",
+    ".validate": "newData.isString() && newData.val().matches(/^[A-Za-z0-9]{8,40}$/) && newData.parent().child('set').val() === true"
+  },
+  "claim": {
+    "$uid": {
+      ".read": "auth != null && auth.uid === $uid",
+      ".write": "auth != null && auth.uid === $uid",
+      ".validate": "root.child('xquote/pass').exists() && newData.val() === root.child('xquote/pass').val()"
+    }
+  },
+  "g": {
+    ".read": true,
+    "$g": {
+      ".write": "auth != null && root.child('xquote/pass').exists() && root.child('xquote/claim/' + auth.uid).val() === root.child('xquote/pass').val()",
+      ".validate": "$g.matches(/^[a-z0-9-]{2,40}$/) && newData.hasChildren(['t'])",
+      "ja": {
+        ".validate": "newData.isString() && (newData.val() === '' || newData.val().matches(/^https:\\/\\/x\\.com\\/[A-Za-z0-9_]{1,15}\\/status\\/[0-9]{5,25}$/))"
+      },
+      "en": {
+        ".validate": "newData.isString() && (newData.val() === '' || newData.val().matches(/^https:\\/\\/x\\.com\\/[A-Za-z0-9_]{1,15}\\/status\\/[0-9]{5,25}$/))"
+      },
+      "t": {
+        ".validate": "newData.val() === now"
+      },
+      "$other": {
+        ".validate": false
+      }
+    }
+  }
+}

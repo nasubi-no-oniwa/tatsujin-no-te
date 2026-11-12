@@ -448,7 +448,11 @@ function showResult(){const s=ST,r=s.res;mode='result';pen(0);$('quitBtn').hidde
 $('againBtn').onclick=()=>startEvent(ST.ev);$('rTop').onclick=()=>showTitle();$('rRank').onclick=()=>openRank(ST.ev,true);
 const shareURL=()=>'https://nasubi-no-oniwa.github.io/tatsujin-no-te/';
 function postText(){return t('post',{m:S.MARK[ST.ev],p:S.pct(ST.res.s),g:gradeOf(ST.res.s)});}
-function openX(text,url){const u='https://x.com/intent/post?text='+encodeURIComponent(text)+'&url='+encodeURIComponent(url);const w=window.open(u,'_blank');if(!w)location.href=u;}
+// Xの投稿で引用するツイート（なすびのお庭の管理ページ quote/ で日本語・英語を貼りかえられる）
+let QUOTE={};fetch('https://ft-red-default-rtdb.asia-southeast1.firebasedatabase.app/xquote/g/tatsujin-no-te.json').then(r=>r.json()).then(d=>{if(d&&typeof d==='object')QUOTE=d;}).catch(()=>{});
+function quoteURL(){const u=(lang==='ja'?QUOTE.ja:QUOTE.en)||'';return /^https:\/\/x\.com\/[A-Za-z0-9_]{1,15}\/status\/\d{5,25}$/.test(u)?u:'';}
+function xIntent(text,url){const q=quoteURL();return 'https://x.com/intent/post?text='+encodeURIComponent(q?text+'\n'+url:text)+'&url='+encodeURIComponent(q||url);}
+function openX(text,url){const u=xIntent(text,url);const w=window.open(u,'_blank');if(!w)location.href=u;}
 $('xBtn').onclick=()=>openX(postText(),shareURL());
 
 // ===== 描くところを動画にする =====
@@ -479,7 +483,7 @@ function vidDone(blob,mime){mode='result';show('vidPanel');
  $('vidPrev').hidden=false;const url=URL.createObjectURL(blob);$('vidPrev').src=url;$('vidPrev').play().catch(()=>{});
  const ext=/mp4/.test(mime)?'mp4':'webm';const nm='tatsujin_'+Date.now()+'.'+ext;const file=new File([blob],nm,{type:blob.type});const canShare=!!(navigator.canShare&&navigator.canShare({files:[file]}));
  $('vShare').hidden=!canShare;$('vSave').hidden=false;$('vMsg').textContent=canShare?t('vmade'):t('shareHint');
- $('vShare').onclick=async()=>{try{await navigator.share({files:[file],text:postText()+'\n'+shareURL()});}catch(e){}};
+ $('vShare').onclick=async()=>{try{await navigator.share({files:[file],text:postText()+'\n'+shareURL()+(quoteURL()?'\n'+quoteURL():'')});}catch(e){}};
  $('vSave').onclick=()=>{const a=document.createElement('a');a.href=url;a.download=nm;document.body.appendChild(a);a.click();a.remove();};}
 $('vidBtn').onclick=()=>makeVideo();$('vX').onclick=()=>openX(postText(),shareURL());$('vBack').onclick=()=>show('result');
 
