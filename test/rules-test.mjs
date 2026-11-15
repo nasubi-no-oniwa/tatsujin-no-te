@@ -22,7 +22,13 @@ ex('100%より上は書けない',await req('PUT',P+'/r/sankaku/'+U,U,rec(st,100
 ex('小数の点は書けない',await req('PUT',P+'/r/sankaku/'+U,U,rec(st,90000.5)),false);
 ex('時計をごまかせない',await req('PUT',P+'/r/sankaku/'+U,U,rec(st-5000,90000)),false);
 ex('ほかの人の場所には書けない',await req('PUT',P+'/r/sankaku/'+U2,U,rec(st,90000)),false);
-ex('ない種目には書けない',await req('PUT',P+'/r/hoshi/'+U,U,rec(st,90000)),false);
+ex('ない種目には書けない',await req('PUT',P+'/r/hexagon/'+U,U,rec(st,90000)),false);
+// 達人の手２の種目（線の文字は480字）
+const PP2='Ab0_-'.repeat(96);
+for(const e2 of ['hoshi','heart','uzu','sen','hana'])ex('２の種目 '+e2+' に記録できる',await req('PUT',P+'/r/'+e2+'/'+U,U,rec(st,93000,PP2)),true);
+ex('２の種目に288字の線は書けない',await req('PUT',P+'/r/hana/'+U,U,rec(st,99000)),false);
+ex('１の種目に480字の線は書けない',await req('PUT',P+'/r/maru/'+U,U,rec(st,99000,PP2)),false);
+ex('２の種目に短い線は書けない',await req('PUT',P+'/r/uzu/'+U,U,rec(st,99000,PP2.slice(0,479))),false);
 ex('線の文字が短いと書けない',await req('PUT',P+'/r/sankaku/'+U,U,rec(st,90000,PP.slice(0,287))),false);
 ex('線の文字に変な字があると書けない',await req('PUT',P+'/r/sankaku/'+U,U,rec(st,90000,PP.slice(0,287)+'!')),false);
 ex('名前が長すぎると書けない',await req('PUT',P+'/r/sankaku/'+U,U,rec(st,90000,PP,'あ'.repeat(17))),false);
