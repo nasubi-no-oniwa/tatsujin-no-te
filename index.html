@@ -146,7 +146,8 @@ if(document.body)go();else document.addEventListener('DOMContentLoaded',go);
   <p class="note" id="rBest"></p>
   <p class="note" id="sendMsg"></p>
   <button id="againBtn"></button>
-  <div class="row"><button class="vid" id="vidBtn"></button><button class="x" id="xBtn"></button></div>
+  <div class="row"><button class="vid" id="vidBtn"></button><button class="vid" id="imgBtn"></button></div>
+  <button class="x" id="xBtn"></button>
   <div class="row"><button class="sub" id="rRank"></button><button class="sub" id="rTop"></button></div>
  </div>
 </div>
@@ -196,7 +197,7 @@ ja:{title:'達人の手',sub:'フリーハンド選手権',how:'〇・△・■�
  dirs:['右','右下','下','左下','左','左上','上','右上'],
  grades:['ミミズの手','幼稚園からやり直し','ふるえる手','ふつうの手','器用な手','職人の手','定規いらず','人間コンパス','達人の手','神の手','完全無欠'],gradeL:'称号',
  resT:'{m} の結果',again:'もう一回',xpost:'Xに投稿',top:'タイトルへ',sending:'記録を送っています…',sentRank:'ランキング {r}位',rankOut:'ランキング圏外（上位100人まで）',newBest:'自己ベスト更新！',myBest:'自己ベスト {p}%',senderr:'記録を送れませんでした',offline:'通信できないので、記録は送りません',
- vid:'動画にする',rec:'動画を作っています…',vmade:'動画ができました',vshare:'共有する（Xアプリへ）',vsave:'動画を保存する',vx:'Xに投稿（文だけ）',vback:'もどる',vfail:'この端末では動画を作れませんでした',shareHint:'動画を保存してから、Xに投稿してね',
+ vid:'動画にする',img:'画像にする',rec:'動画を作っています…',vmade:'動画ができました',vshare:'共有する（Xアプリへ）',vsave:'動画を保存する',vx:'Xに投稿（文だけ）',vback:'もどる',vfail:'この端末では動画を作れませんでした',shareHint:'動画を保存してから、Xに投稿してね',
  rkTitle:'ランキング',loading:'読みこみ中…',empty:'まだ記録がありません',rankerr:'ランキングを読みこめませんでした',people:'{n}人',perfMore:'ほか {n}人',tapReplay:'名前を押すと、描くところを再生できるよ',back:'もどる',replayOf:'{n} の {m}',replay:'もう一度見る',
  post:'達人の手\n{m} {p}%\n称号「{g}」\n#達人の手 #ブラウザゲーム',ogp:'見本なし・一発勝負・7秒'},
 en:{title:"MASTER'S HAND",sub:'Freehand Championship',how:'How cleanly can you draw 〇 △ ■ ✖ with a finger? No guide, one shot, 7 seconds.',nameph:'Name (optional)',noname:'Nameless Master',best:'Best {p}%',nobest:'No record yet',rank:'Rankings',
@@ -206,7 +207,7 @@ en:{title:"MASTER'S HAND",sub:'Freehand Championship',how:'How cleanly can you d
  dirs:['right','lower right','bottom','lower left','left','upper left','top','upper right'],
  grades:['Wiggly Worm','Back to Kindergarten','Shaky Hand','Ordinary Hand','Deft Hand',"Craftsman's Hand",'No Ruler Needed','Human Compass',"Master's Hand",'Hand of God','Flawless'],gradeL:'Title',
  resT:'{m} result',again:'Again',xpost:'Post on X',top:'Title',sending:'Sending your record…',sentRank:'Rank #{r}',rankOut:'Outside the top 100',newBest:'New personal best!',myBest:'Best {p}%',senderr:'Could not send your record',offline:'Offline, so the record was not sent',
- vid:'Make a video',rec:'Making the video…',vmade:'Video ready',vshare:'Share (to the X app)',vsave:'Save video',vx:'Post on X (text only)',vback:'Back',vfail:'This device could not make the video',shareHint:'Save the video, then post it on X',
+ vid:'Make a video',img:'Make an image',rec:'Making the video…',vmade:'Video ready',vshare:'Share (to the X app)',vsave:'Save video',vx:'Post on X (text only)',vback:'Back',vfail:'This device could not make the video',shareHint:'Save the video, then post it on X',
  rkTitle:'Rankings',loading:'Loading…',empty:'No records yet',rankerr:'Could not load the rankings',people:'{n} people',perfMore:'and {n} more',tapReplay:'Tap a name to replay the drawing',back:'Back',replayOf:"{n}'s {m}",replay:'Replay',
  post:"MASTER'S HAND\n{m} {p}%\nTitle: {g}\n#達人の手 #ブラウザゲーム",ogp:'No guide. One shot. 7 seconds.'},
 zh:{title:'達人之手',sub:'徒手畫選手權',how:'用手指能把〇・△・■・✖畫得多漂亮？沒有範本、一次決勝、7秒。',nameph:'名字（可不填）',noname:'無名達人',best:'個人最佳 {p}%',nobest:'尚無紀錄',rank:'排行榜',
@@ -216,7 +217,7 @@ zh:{title:'達人之手',sub:'徒手畫選手權',how:'用手指能把〇・△�
  dirs:['右邊','右下','下面','左下','左邊','左上','上面','右上'],
  grades:['蚯蚓之手','回幼稚園重練','顫抖的手','普通的手','靈巧的手','職人之手','不需要尺','人體圓規','達人之手','神之手','完美無缺'],gradeL:'稱號',
  resT:'{m} 的結果',again:'再一次',xpost:'發到X',top:'回標題',sending:'正在傳送紀錄…',sentRank:'排行榜 第{r}名',rankOut:'排行榜圈外（只到前100名）',newBest:'刷新個人最佳！',myBest:'個人最佳 {p}%',senderr:'無法傳送紀錄',offline:'無法連線，不傳送紀錄',
- vid:'做成影片',rec:'正在製作影片…',vmade:'影片做好了',vshare:'分享（到X App）',vsave:'儲存影片',vx:'發到X（只有文字）',vback:'返回',vfail:'這台裝置無法製作影片',shareHint:'先儲存影片，再發到X',
+ vid:'做成影片',img:'做成圖片',rec:'正在製作影片…',vmade:'影片做好了',vshare:'分享（到X App）',vsave:'儲存影片',vx:'發到X（只有文字）',vback:'返回',vfail:'這台裝置無法製作影片',shareHint:'先儲存影片，再發到X',
  rkTitle:'排行榜',loading:'讀取中…',empty:'還沒有紀錄',rankerr:'無法讀取排行榜',people:'{n}人',perfMore:'還有 {n}人',tapReplay:'點名字可以重播畫的過程',back:'返回',replayOf:'{n} 的 {m}',replay:'再播一次',
  post:'達人之手\n{m} {p}%\n稱號「{g}」\n#達人の手 #ブラウザゲーム',ogp:'沒有範本・一次決勝・7秒'},
 ko:{title:'달인의 손',sub:'프리핸드 선수권',how:'〇・△・■・✖를 손가락으로 얼마나 깔끔하게 그릴 수 있을까. 견본 없음, 단판 승부, 7초.',nameph:'이름 (없어도 OK)',noname:'이름 없는 달인',best:'최고 기록 {p}%',nobest:'아직 기록 없음',rank:'랭킹',
@@ -226,7 +227,7 @@ ko:{title:'달인의 손',sub:'프리핸드 선수권',how:'〇・△・■・�
  dirs:['오른쪽','오른쪽 아래','아래쪽','왼쪽 아래','왼쪽','왼쪽 위','위쪽','오른쪽 위'],
  grades:['지렁이 손','유치원부터 다시','떨리는 손','평범한 손','솜씨 좋은 손','장인의 손','자가 필요 없는 손','인간 컴퍼스','달인의 손','신의 손','완전무결'],gradeL:'칭호',
  resT:'{m} 결과',again:'한 번 더',xpost:'X에 올리기',top:'타이틀로',sending:'기록을 보내는 중…',sentRank:'랭킹 {r}위',rankOut:'랭킹 밖 (상위 100명까지)',newBest:'최고 기록 갱신!',myBest:'최고 기록 {p}%',senderr:'기록을 보내지 못했습니다',offline:'통신할 수 없어 기록을 보내지 않습니다',
- vid:'영상 만들기',rec:'영상을 만드는 중…',vmade:'영상이 완성되었습니다',vshare:'공유하기 (X 앱으로)',vsave:'영상 저장',vx:'X에 올리기 (글만)',vback:'돌아가기',vfail:'이 기기에서는 영상을 만들 수 없습니다',shareHint:'영상을 저장한 뒤 X에 올려 주세요',
+ vid:'영상 만들기',img:'이미지 만들기',rec:'영상을 만드는 중…',vmade:'영상이 완성되었습니다',vshare:'공유하기 (X 앱으로)',vsave:'영상 저장',vx:'X에 올리기 (글만)',vback:'돌아가기',vfail:'이 기기에서는 영상을 만들 수 없습니다',shareHint:'영상을 저장한 뒤 X에 올려 주세요',
  rkTitle:'랭킹',loading:'불러오는 중…',empty:'아직 기록이 없습니다',rankerr:'랭킹을 불러오지 못했습니다',people:'{n}명',perfMore:'외 {n}명',tapReplay:'이름을 누르면 그리는 모습을 다시 볼 수 있어요',back:'돌아가기',replayOf:'{n} 의 {m}',replay:'다시 보기',
  post:'달인의 손\n{m} {p}%\n칭호 「{g}」\n#達人の手 #ブラウザゲーム',ogp:'견본 없음・단판 승부・7초'}
 };
@@ -437,7 +438,7 @@ function applyLang(){document.documentElement.lang=lang==='zh'?'zh-Hant':lang;do
  const best=ls.get('tt_best',{});const box=$('evs');box.innerHTML='';
  for(const ev of S.EVENTS){const b=document.createElement('button');b.innerHTML='<svg viewBox="0 0 60 60" fill="none" stroke="#1c1c1c" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">'+SVG[ev]+'</svg><b>'+esc(t('ev_'+ev))+'</b><small>'+esc(best[ev]!=null?t('best',{p:S.pct(best[ev])}):t('nobest'))+'</small>';b.onclick=()=>startEvent(ev);box.appendChild(b);}
  $('rankBtn').textContent=t('rank');$('quitBtn').textContent=t('quit');
- $('againBtn').textContent=t('again');$('vidBtn').textContent=t('vid');$('xBtn').textContent=t('xpost');$('rRank').textContent=t('rank');$('rTop').textContent=t('top');
+ $('againBtn').textContent=t('again');$('vidBtn').textContent=t('vid');$('imgBtn').textContent=t('img');$('xBtn').textContent=t('xpost');$('rRank').textContent=t('rank');$('rTop').textContent=t('top');
  $('vShare').textContent=t('vshare');$('vSave').textContent=t('vsave');$('vX').textContent=t('vx');$('vBack').textContent=t('vback');
  $('rkTitle').textContent=t('rkTitle');$('rankBack').textContent=t('back');$('rkTip').textContent=t('tapReplay');$('rpAgain').textContent=t('replay');$('rpBack').textContent=t('back');
  const lg=$('langs');lg.innerHTML='';for(const [k,n] of LANGS){const b=document.createElement('button');b.textContent=n;if(k===lang)b.className='on';b.onclick=()=>{lang=k;ls.set('tt_lang',k);applyLang();};lg.appendChild(b);}}
@@ -488,7 +489,14 @@ function vidDone(blob,mime){mode='result';show('vidPanel');
  $('vShare').hidden=!canShare;$('vSave').hidden=false;$('vMsg').textContent=canShare?t('vmade'):t('shareHint');
  $('vShare').onclick=async()=>{try{await navigator.share({files:[file],text:postText()+'\n'+shareURL()+(quoteURL()?'\n'+quoteURL():'')});}catch(e){}};
  $('vSave').onclick=()=>{const a=document.createElement('a');a.href=url;a.download=nm;document.body.appendChild(a);a.click();a.remove();};}
-$('vidBtn').onclick=()=>makeVideo();$('vX').onclick=()=>openX(postText(),shareURL());$('vBack').onclick=()=>show('result');
+$('vidBtn').onclick=()=>makeVideo();
+// 結果を画像にする（動画の最後の札と同じ絵）。共有できる端末は共有、できなければ保存
+async function makeImage(){if(!ST||!ST.res)return;const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
+ paint(g,W,H,{ev:ST.ev,pts:ST.pts,res:ST.res,name:myName(),jt:JLEN,ot:-1,show:1,timer:-1,card:1});
+ const blob=await new Promise(r=>c.toBlob(r,'image/png'));if(!blob)return;const nm='tatsujin_'+Date.now()+'.png',file=new File([blob],nm,{type:'image/png'});
+ try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],text:postText()+'\n'+shareURL()+(quoteURL()?'\n'+quoteURL():'')});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=nm;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);}
+$('imgBtn').onclick=()=>makeImage();$('vX').onclick=()=>openX(postText(),shareURL());$('vBack').onclick=()=>show('result');
 
 // ===== ランキング（Firebase：ft-red の tatsujin の下） =====
 const FB={apiKey:'AIzaSyBCzVyblBmfNQq4XdPHdQppE94gyiYxDkA',databaseURL:'https://ft-red-default-rtdb.asia-southeast1.firebasedatabase.app'};
