@@ -578,25 +578,36 @@ function takeTicket(){if(PV)return Promise.resolve(Date.now());
 const TOPN=100,BC={};
 // 線から点を計算しなおす（重いので Worker で。確かめた記録は端末に覚えておく）
 const hashP=(ev,p,s)=>{let h=2166136261;const x=ev+p+s;for(let i=0;i<x.length;i++){h^=x.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0).toString(36);};
-let VOK=ls.get('tt2_vok',{}),WK=null,wkN=0;const wkCb={};
-function worker(){if(WK!==null)return WK;try{WK=new Worker('verify.js?v=1',{type:'module'});WK.onmessage=e=>{const c=wkCb[e.data.id];if(c){delete wkCb[e.data.id];c(e.data.ok);}};WK.onerror=()=>{WK=false;};}catch(e){WK=false;}return WK;}
-const vOne=(ev,p,s)=>new Promise(res=>{const w=worker();if(!w){res(!!S.verify(ev,p,s));return;}const id=++wkN;wkCb[id]=res;w.postMessage({id,ev,p,s});setTimeout(()=>{if(wkCb[id]){delete wkCb[id];res(!!S.verify(ev,p,s));}},8000);});
-async function verifyMany(ev,rows){const out=new Array(rows.length);let done=0;const box=$('rankBox');
- for(let i=0;i<rows.length;i++){const r=rows[i],k=hashP(ev,r.p,r.s);if(VOK[k]){out[i]=true;done++;continue;}
-  out[i]=await vOne(ev,r.p,r.s);if(out[i])VOK[k]=1;done++;if(box&&!$('rankPanel').hidden&&done%5===0)box.innerHTML='<p>'+esc(t('checking',{n:done,m:rows.length}))+'</p>';}
- const ks=Object.keys(VOK);if(ks.length>3000){VOK={};}ls.set('tt2_vok',VOK);return out;}
+let VOK=ls.get('tt2_vok',{}),VBAD=ls.get('tt2_vbad',{});const POOL=[];let poolDead=false;
+// 確かめる働き手を数人（端末のCPUに合わせて最大4人）同時に動かす
+function pool(){if(POOL.length||poolDead)return POOL;const n=Math.max(1,Math.min(4,(navigator.hardwareConcurrency||2)-1));
+ for(let i=0;i<n;i++){try{const w=new Worker('verify.js?v=1',{type:'module'});w.cb={};w.busy=0;w.onmessage=e=>{const c=w.cb[e.data.id];if(c){delete w.cb[e.data.id];w.busy--;c(e.data.ok);}};w.onerror=()=>{w.dead=1;};POOL.push(w);}catch(e){}}
+ if(!POOL.length)poolDead=true;return POOL;}
+let wkN=0;
+// 1件を確かめる。true＝合っている／false＝合わない／null＝確かめられなかった（出したままにする）
+const vOne=(ev,p,s)=>new Promise(res=>{const ws=pool().filter(w=>!w.dead);if(!ws.length){res(null);return;}const w=ws.reduce((a,b)=>a.busy<=b.busy?a:b);const id=++wkN;w.busy++;w.cb[id]=res;w.postMessage({id,ev,p,s});
+ setTimeout(()=>{if(w.cb[id]){delete w.cb[id];w.busy--;res(null);}},15000);});
+const saveV=()=>{if(Object.keys(VOK).length>3000)VOK={};if(Object.keys(VBAD).length>1000)VBAD={};ls.set('tt2_vok',VOK);ls.set('tt2_vbad',VBAD);};
+// まだ確かめていない記録を、上から順に、働き手の人数ぶん同時に確かめる。合わない記録が見つかったら onBad を呼ぶ
+async function verifyBg(ev,rows,onBad){const todo=rows.filter(r=>{const k=hashP(ev,r.p,r.s);r.vk=k;return !VOK[k]&&!VBAD[k];});if(!todo.length)return;
+ let i=0;const n=Math.max(1,pool().length);
+ const run=async()=>{while(i<todo.length){const r=todo[i++];const ok=await vOne(ev,r.p,r.s);if(ok===true)VOK[r.vk]=1;else if(ok===false){VBAD[r.vk]=1;onBad(r);}}};
+ await Promise.all(Array.from({length:n},run));saveV();}
+const isBad=(ev,r)=>!!VBAD[hashP(ev,r.p,r.s)];
+function reRank(b){const base=b.perf>0?1:0;b.rows.forEach((r,i)=>{r.rk=i>0&&b.rows[i-1].k===r.k?b.rows[i-1].rk:i+1+base;});}
+function saveThr(ev,b){const thr=ls.get('tt2_thr',{});thr[ev]={k:b.rows.length>=TOPN?b.rows[b.rows.length-1].k:0,t:Date.now()};ls.set('tt2_thr',thr);}
+let rkRender=null;
 async function loadBoard(ev){const c=BC[ev];if(c&&Date.now()-c.t<60000)return c;
  const [j,pc,h]=await Promise.all([fetchR(DB('r/'+ev)+'.json?orderBy=%22k%22&endAt='+(S.FULL-1)+'&limitToLast='+TOPN).then(r=>{if(!r.ok)throw 0;return r.json();}),
   fetchR(DB('p/'+ev)+'.json?shallow=true').then(r=>r.ok?r.json():null).catch(()=>null),fetchR(DB('hidden')+'.json').then(r=>r.ok?r.json():null).catch(()=>null)]);
  const perf=pc?Object.keys(pc).filter(id=>!(h&&h[id])).length:0;
- // 線から点を計算しなおして、合わない記録は出さない
- const cand=Object.entries(j||{}).map(([id,v])=>({...v,id})).filter(r=>!(h&&h[r.id])&&r.s<S.FULL);const okv=await verifyMany(ev,cand);
- const rows=cand.filter((r,i)=>okv[i]).sort((a,b)=>b.k-a.k||a.t-b.t);
- const base=perf>0?1:0;rows.forEach((r,i)=>{r.rk=i>0&&rows[i-1].k===r.k?rows[i-1].rk:i+1+base;});
- const thr=ls.get('tt2_thr',{});thr[ev]={k:rows.length>=TOPN?rows[rows.length-1].k:0,t:Date.now()};ls.set('tt2_thr',thr);
- return BC[ev]={t:Date.now(),rows,perf,hid:h};}
+ // すぐ表示する。線から点を計算しなおす確かめは裏で進め、合わない記録が見つかったらその場で消す（一度合わなかった記録は端末に覚えて最初から出さない）
+ const rows=Object.entries(j||{}).map(([id,v])=>({...v,id})).filter(r=>!(h&&h[r.id])&&r.s<S.FULL&&!isBad(ev,r)).sort((a,b)=>b.k-a.k||a.t-b.t);
+ const b=BC[ev]={t:Date.now(),rows,perf,hid:h};reRank(b);saveThr(ev,b);
+ verifyBg(ev,rows,r=>{const i=b.rows.indexOf(r);if(i<0)return;b.rows.splice(i,1);reRank(b);saveThr(ev,b);if(rkEv===ev&&!$('rankPanel').hidden&&rkRender)rkRender();});
+ return b;}
 async function loadPerfect(ev,h){const j=await fetchR(DB('r/'+ev)+'.json?orderBy=%22k%22&equalTo='+S.FULL+'&limitToFirst=100').then(r=>{if(!r.ok)throw 0;return r.json();});
- const cand=Object.entries(j||{}).map(([id,v])=>({...v,id})).filter(r=>!(h&&h[r.id]));const okv=await verifyMany(ev,cand);return cand.filter((r,i)=>okv[i]).sort((a,b)=>a.t-b.t);}
+ const cand=Object.entries(j||{}).map(([id,v])=>({...v,id})).filter(r=>!(h&&h[r.id])&&!isBad(ev,r));await verifyBg(ev,cand,()=>{});return cand.filter(r=>!isBad(ev,r)).sort((a,b)=>a.t-b.t);}
 async function submit(){const msg=$('sendMsg'),bst=$('rBest');msg.textContent='';msg.className='note';const ev=ST.ev,res=ST.res,me=ST;
  const best=ls.get('tt2_best',{}),prev=best[ev];const isBest=prev==null||res.s>prev;if(isBest){best[ev]=res.s;ls.set('tt2_best',best);}
  bst.textContent=isBest&&prev!=null?t('newBest'):t('myBest',{p:S.pct(best[ev])});bst.className='note'+(isBest&&prev!=null?' ok':'');
@@ -625,8 +636,9 @@ async function openRank(ev,fromResult){if(fromResult!=null)rankFrom=!!fromResult
   const pf=$('pfRow');if(pf)pf.onclick=async()=>{if(box.querySelector('tr.pl'))return;try{rkPerf=PV?[]:await loadPerfect(rkEv,(BC[rkEv]||{}).hid);const n=((BC[rkEv]||{}).perf||rkPerf.length)-rkPerf.length;
     pf.insertAdjacentHTML('afterend',rkPerf.map((r,i)=>'<tr class="pl" data-i="'+(1000+i)+'"><td></td><td class="n">'+esc(r.n)+'</td><td class="c">100.000%</td></tr>').join('')+(n>0?'<tr class="pl"><td></td><td colspan="2">'+esc(t('perfMore',{n}))+'</td></tr>':''));bind();}catch(e){}};};
  if(PV){rkRows=PVROWS.map((x,i)=>({rk:i+2,n:x[0],s:x[1]}));box.innerHTML='<table class="rank">'+pfH(3)+rkRows.map((r,i)=>rowH(r,-1,false)).join('')+'</table>';return;}
- const my=rkEv;try{const b=await loadBoard(rkEv);if(my!==rkEv)return;rkRows=b.rows;const myId=(ls.get('tt_auth',null)||{}).uid;
-  let h='<table class="rank">'+(b.perf>0?pfH(b.perf):'')+rkRows.map((r,i)=>rowH(r,i,r.id===myId)).join('');if(!rkRows.length&&!b.perf)h+='<tr><td></td><td colspan="2">'+esc(t('empty'))+'</td></tr>';box.innerHTML=h+'</table>';bind();
+ const my=rkEv;try{const b=await loadBoard(rkEv);if(my!==rkEv)return;const myId=(ls.get('tt_auth',null)||{}).uid;
+  rkRender=()=>{if(my!==rkEv)return;if(box.querySelector('tr.pl'))return;rkRows=b.rows.slice();let h='<table class="rank">'+(b.perf>0?pfH(b.perf):'')+rkRows.map((r,i)=>rowH(r,i,r.id===myId)).join('');if(!rkRows.length&&!b.perf)h+='<tr><td></td><td colspan="2">'+esc(t('empty'))+'</td></tr>';
+   box.innerHTML=h+'</table>';bind();};rkRender();
  }catch(e){box.innerHTML='<p>'+esc(t('rankerr'))+'</p>';}}
 let keepST=null;
 function startReplay(ev,row){if(!row||!row.p)return;const pts=S.decode(row.p);const res=pts&&S.score(ev,pts);if(!res||res.err)return;audio();
