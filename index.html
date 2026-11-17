@@ -47,6 +47,7 @@ body{position:fixed;inset:0}
 .evs button svg{display:block;width:54px;height:54px;margin:0 auto 2px}
 .evs button b{display:block;font-size:17px;font-family:var(--serif)}
 .evs button small{display:block;font-size:11px;color:var(--sub);font-weight:700;margin-top:2px;min-height:1.3em;font-variant-numeric:tabular-nums}
+#toV2{display:block;margin-top:10px;font-size:13px;color:var(--sub);font-weight:700;text-decoration:underline}
 #langs{display:flex;gap:6px;justify-content:center;margin-top:10px;flex-wrap:wrap}
 #langs button{width:auto;flex:none;padding:6px 10px;font-size:13px;margin:0;background:#ece5d3;color:var(--ink)}
 #langs button.on{background:var(--ink);color:#fff}
@@ -132,6 +133,7 @@ if(document.body)go();else document.addEventListener('DOMContentLoaded',go);
   <input id="nameIn" maxlength="12" autocomplete="off">
   <div class="evs" id="evs"></div>
   <button class="sub" id="rankBtn"></button>
+  <a id="toV2" href="2/"></a>
   <div id="langs"></div>
  </div>
 </div>
@@ -234,6 +236,9 @@ ko:{title:'달인의 손',sub:'프리핸드 선수권',how:'〇・△・■・�
 let lang=ls.get('tt_lang',null)||Q.get('lang');
 if(!TX[lang]){const nl=(navigator.language||'ja').toLowerCase();lang=nl.startsWith('ja')?'ja':nl.startsWith('ko')?'ko':nl.startsWith('zh')?'zh':'en';}
 if(Q.get('lang')&&TX[Q.get('lang')])lang=Q.get('lang');
+// 達人の手２ への案内（タイトル画面）
+Object.assign(TX.ja,{toV2:'☆・ハート・渦巻き・直線・花は「達人の手２」で'});Object.assign(TX.en,{toV2:"Star, heart, spiral, line and flower are in MASTER'S HAND 2"});
+Object.assign(TX.zh,{toV2:'星星・愛心・漩渦・直線・花 在「達人之手２」'});Object.assign(TX.ko,{toV2:'별・하트・소용돌이・직선・꽃은 「달인의 손 2」에서'});
 function t(k,o){let s=(TX[lang]&&TX[lang][k]!=null)?TX[lang][k]:(TX.ja[k]!=null?TX.ja[k]:k);if(o)for(const x in o)s=String(s).split('{'+x+'}').join(o[x]);return s;}
 const MK=ev=>S.MARK[ev]+(ev==='batsu'?'︎':'');
 const GR=[0,50,70,80,87,92,95,97,98.5,99.5,100];
@@ -437,7 +442,7 @@ function applyLang(){document.documentElement.lang=lang==='zh'?'zh-Hant':lang;do
  $('tTitle').innerHTML=esc(t('title'))+'<small>'+esc(t('sub'))+'</small>';$('tHow').textContent=t('how');$('nameIn').placeholder=t('nameph');
  const best=ls.get('tt_best',{});const box=$('evs');box.innerHTML='';
  for(const ev of S.EVENTS){const b=document.createElement('button');b.innerHTML='<svg viewBox="0 0 60 60" fill="none" stroke="#1c1c1c" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">'+SVG[ev]+'</svg><b>'+esc(t('ev_'+ev))+'</b><small>'+esc(best[ev]!=null?t('best',{p:S.pct(best[ev])}):t('nobest'))+'</small>';b.onclick=()=>startEvent(ev);box.appendChild(b);}
- $('rankBtn').textContent=t('rank');$('quitBtn').textContent=t('quit');
+ $('rankBtn').textContent=t('rank');$('toV2').textContent=t('toV2');$('quitBtn').textContent=t('quit');
  $('againBtn').textContent=t('again');$('vidBtn').textContent=t('vid');$('imgBtn').textContent=t('img');$('xBtn').textContent=t('xpost');$('rRank').textContent=t('rank');$('rTop').textContent=t('top');
  $('vShare').textContent=t('vshare');$('vSave').textContent=t('vsave');$('vX').textContent=t('vx');$('vBack').textContent=t('vback');
  $('rkTitle').textContent=t('rkTitle');$('rankBack').textContent=t('back');$('rkTip').textContent=t('tapReplay');$('rpAgain').textContent=t('replay');$('rpBack').textContent=t('back');
